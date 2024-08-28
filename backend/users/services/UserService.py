@@ -4,24 +4,24 @@ class UserService:
     def getUsers(self):
         return CustomUser.objects.all()
 
-    def getUserByEmail(self,email):
+    def getUserById(self,uid):
         try:
-            return CustomUser.objects.get(email=email)
+            return CustomUser.objects.get(user_id=uid)
         except:
-            return f"user with {email} not found."
+            return f"user with {uid} not found."
 
-    def updateUser(self,current_email,**kwargs):
+    def updateUser(self,uid,**kwargs):
         try:
-            user = self.getUserByEmail(current_email)
+            user = self.getUserById(uid)
             for key,value in kwargs.items():
                 setattr(user,key,value)
             user.save()
         except Exception as e:
             return f"not able to update {e}"
 
-    def deleteUser(self,email):
+    def deleteUser(self,uid):
         try:
-            user = self.getUserByEmail(email)
+            user = self.getUserById(uid)
             user.delete()
         except:
             return f"not able to delete the user"
