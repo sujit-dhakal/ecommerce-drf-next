@@ -1,9 +1,7 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from users.services.UserService import UserService
 from rest_framework.response import Response
 from users.serializers.serializers import UserSerializer,UserChangePasswordSerializer,UserLoginSerializer,UserRegistrationSerializer,SendResetPasswordEmailSerializer,UserResetPasswordSerializer
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.http import urlsafe_base64_decode
@@ -11,45 +9,102 @@ from users.models import CustomUser
 from django.contrib.auth.tokens import default_token_generator
 
 class UserListView(APIView):
-    """ view for listing all the users. """
+    """
+    API view to list all users.
+
+    This view handles GET requests to retrieve a list of all users.
+    """
     def __init__(self):
+        """Initialize the UserListView with a UserService instance."""
         self.obj = UserService()
 
-    def get(self,request,format=None):
-        """ function to get all the users"""
+    def get(self,request):
+        """
+        Handle GET requests to retrieve all users.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            Response: The response containing the serialized user data.
+        """
         users = self.obj.getUsers()
         serializer = UserSerializer(users,many=True)
         return Response(serializer.data)
 
 class UserDetailView(APIView):
-    """ view for retriving, updating and deleting a specific user. """
+    """
+    API view to retrieve, update, or delete a specific user.
+
+    This view handles GET, PUT, and DELETE requests for a single user based on their UID.
+    """
     def __init__(self):
+        """Initialize the UserListView with a UserService instance."""
         self.obj = UserService()
 
-    def get(self,request,uid,format=None):
-        """ function to handle get request to retrive a specific user. """
+    def get(self,request,uid):
+        """
+        Handle GET requests to retrieve a specific user.
+
+        Args:
+            request (Request): The request object.
+            uid (str): The UID of the user to retrieve.
+
+        Returns:
+            Response: The response containing the serialized user data.
+        """
         user = self.obj.getUserById(uid)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
-    def put(self,request,uid,format=None):
-        """ function to handle put request to update a sepcific user. """
+    def put(self,request,uid):
+        """
+        Handle PUT requests to update a specific user.
+
+        Args:
+            request (Request): The request object containing update data.
+            uid (str): The UID of the user to update.
+
+        Returns:
+            Response: The response containing the updated user data.
+        """
         self.obj.updateUser(uid,**request.data)
         user = self.obj.getUserById(request.data.get('user_id',uid))
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
-    def delete(self,request,uid,format=None):
-        """ function to handle delete request to delete a specific user. """
+    def delete(self,request,uid):
+        """
+        Handle DELETE requests to delete a specific user.
+
+        Args:
+            request (Request): The request object.
+            uid (str): The UID of the user to delete.
+
+        Returns:
+            Response: The response indicating the user has been deleted.
+        """
         self.obj.deleteUser(uid)
         return Response({
             'msg':f'user with uid: {uid} deleted successfully'
         })
 
 class UserRegisterView(APIView):
-    """ view for user registration. """
-    def post(self,request,format=None):
-        """ function to handle post request to register a user. """
+    """
+    API view to handle user registration.
+
+    This view handles POST requests to create a new user.
+    """
+    def post(self,request):
+        """
+        Handle POST requests to register a new user.
+
+        Args:
+            request (Request): The request object containing registration data.
+
+        Returns:
+            Response: The response containing the serialized user data.
+        """
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -59,9 +114,23 @@ class UserRegisterView(APIView):
         })
 
 class VerifyEmailView(APIView):
-    """ view for verifying email address of a user. """
-    def get(self,request,uid,token,format=None):
-        """ function to handle get request to verify the email address of a user. """
+    """
+    API view to handle email verification.
+
+    This view handles GET requests to verify a user's email using a token.
+    """
+    def get(self,request,uid,token):
+        """
+        Handle GET requests to verify a user's email.
+
+        Args:
+            request (Request): The request object.
+            uid (str): The encoded UID of the user.
+            token (str): The token for email verification.
+
+        Returns:
+            Response: The response indicating whether the email was successfully verified.
+        """
         try:
             user_id = urlsafe_base64_decode(uid).decode()
             user = CustomUser.objects.get(user_id=user_id)
@@ -80,9 +149,22 @@ class VerifyEmailView(APIView):
 
 
 class UserLoginView(APIView):
-    """ view for user login. """
-    def post(self,request,format=None):
-        """ function to handle post request to login user and generate access and refresh token. """
+    """
+    API view to handle user login.
+
+    This view handles POST requests to authenticate a user and return JWT tokens.
+    """
+    def post(self,request):
+        """
+        Handle POST requests to log a user in.
+
+        Args:
+            request (Request): The request object containing login data.
+            format (str, optional): Format suffix.
+
+        Returns:
+            Response: The response containing the JWT access and refresh tokens.
+        """
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.validated_data
@@ -97,9 +179,22 @@ class UserLoginView(APIView):
         })
 
 class UserLogoutView(APIView):
-    """ view for user logout """
+    """
+    API view to handle user logout.
+
+    This view handles POST requests to log a user out by blacklisting the refresh token.
+    """
     def post(self,request,format=None):
-        """ function to handle post request to logout the user by blacklisting the refresh token."""
+        """
+        Handle POST requests to log a user out.
+
+        Args:
+            request (Request): The request object containing the refresh token.
+            format (str, optional): Format suffix.
+
+        Returns:
+            Response: The response indicating whether the logout was successful.
+        """
         refresh_token = request.data.get("refresh")
         if not refresh_token:
             return Response({
@@ -116,10 +211,23 @@ class UserLogoutView(APIView):
                 'msg': f'{e}'
             })
 class UserChangePassword(APIView):
-    """ view for changing password of the user."""
+    """
+    API view to handle password change requests.
+
+    This view handles POST requests to change a user's password.
+    """
     permission_classes = [IsAuthenticated]
     def post(self,request,format=None):
-        """ function to handle post request to change the password of the user. """
+        """
+        Handle POST requests to change the user's password.
+
+        Args:
+            request (Request): The request object containing the new passwords.
+            format (str, optional): Format suffix.
+
+        Returns:
+            Response: The response indicating whether the password change was successful.
+        """
         serializer = UserChangePasswordSerializer(data=request.data,context={'user':request.user})
         if serializer.is_valid(raise_exception=True):
             return Response({
@@ -130,9 +238,22 @@ class UserChangePassword(APIView):
         })
 
 class SendPasswordResetEmailView(APIView):
-    """ view for sending the passoword reset link to the user email. """
+    """
+    API view to handle sending password reset emails.
+
+    This view handles POST requests to send a password reset link to the user's email.
+    """
     def post(self,request,format=None):
-        """ function to handle the post request to send password reset link to the user email."""
+        """
+        Handle POST requests to send a password reset email.
+
+        Args:
+            request (Request): The request object containing the user's email.
+            format (str, optional): Format suffix.
+
+        Returns:
+            Response: The response indicating whether the email was sent successfully.
+        """
         serializer = SendResetPasswordEmailSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             return Response(            {
@@ -144,9 +265,24 @@ class SendPasswordResetEmailView(APIView):
             }
         )
 class UserResetPasswordView(APIView):
-    """ view for reset the password of the user. """
+    """
+    API view to handle resetting a user's password.
+
+    This view handles POST requests to reset a user's password using a token.
+    """
     def post(self,request,uid,token,format=None):
-        """ function to handle the post request to reset the password of the user. """
+        """
+        Handle POST requests to reset the user's password.
+
+        Args:
+            request (Request): The request object containing the new passwords.
+            uid (str): The encoded UID of the user.
+            token (str): The token for password reset.
+            format (str, optional): Format suffix.
+
+        Returns:
+            Response: The response indicating whether the password reset was successful.
+        """
         serializer = UserResetPasswordSerializer(data=request.data,context={'uid':uid,'token':token})
         if serializer.is_valid(raise_exception=True):
             return Response({
