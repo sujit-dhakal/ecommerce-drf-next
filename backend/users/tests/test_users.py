@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from users.services.UserService import UserService
 import uuid
-
 class UserServiceTests(TestCase):
     """
     Test case for the UserService class.
@@ -38,7 +37,7 @@ class UserServiceTests(TestCase):
 
     def test_get_users_no_users(self):
         """
-        Test retrieving users when there is no users in the database.
+        Test retrieving users no users when there is no users in the database.
 
         This method verifies that the `getUsers` method of UserService returns an empty queryset when no users exists.
         """
