@@ -40,11 +40,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields (list): Fields to include in the serialization.
     """
     password = serializers.CharField(style={'input_type':'password'},write_only=True)
-    password2 = serializers.CharField(style={'input_type':'password'},write_only=True)
+    confirm_password = serializers.CharField(style={'input_type':'password'},write_only=True)
     user_id = serializers.ReadOnlyField()
     class Meta:
         model = CustomUser
-        fields = ['user_id','email',"first_name","last_name","username","password","password2"]
+        fields = ['user_id','email',"first_name","last_name","username","password","confirm_password"]
 
     def validate(self, attrs):
         """
@@ -59,7 +59,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         Returns:
             dict: The validated data.
         """
-        if attrs['password'] != attrs['password2']:
+        if attrs['password'] != attrs['confirm_password']:
             raise ValidationError("password do not match")
         return attrs
 
@@ -73,7 +73,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         Returns:
             CustomUser: The created user instance.
         """
-        validated_data.pop("password2")
+        validated_data.pop("confirm_password")
         user = CustomUser.objects.create_user(**validated_data)
         self.send_verification_email(user)
         return user
