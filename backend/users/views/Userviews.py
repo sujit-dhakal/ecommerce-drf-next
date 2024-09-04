@@ -7,6 +7,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.http import urlsafe_base64_decode
 from users.models import CustomUser
 from django.contrib.auth.tokens import default_token_generator
+from rest_framework.views import status
+from django.shortcuts import redirect
 
 class UserListView(APIView):
     """
@@ -30,7 +32,7 @@ class UserListView(APIView):
         """
         users = self.obj.getUsers()
         serializer = UserSerializer(users,many=True)
-        return Response(serializer.data)
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
 class UserDetailView(APIView):
     """
@@ -55,7 +57,7 @@ class UserDetailView(APIView):
         """
         user = self.obj.getUserById(uid)
         serializer = UserSerializer(user)
-        return Response(serializer.data)
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
     def put(self,request,uid):
         """
@@ -71,7 +73,7 @@ class UserDetailView(APIView):
         self.obj.updateUser(uid,**request.data)
         user = self.obj.getUserById(request.data.get('user_id',uid))
         serializer = UserSerializer(user)
-        return Response(serializer.data)
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
     def delete(self,request,uid):
         """
@@ -108,10 +110,12 @@ class UserRegisterView(APIView):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(serializer.data)
+            return Response({
+                'msg':'created user successfully'
+            },status=status.HTTP_200_OK)
         return Response({
             'msg':'failed to create user'
-        })
+        },status=status.HTTP_400_BAD_REQUEST)
 
 class VerifyEmailView(APIView):
     """
@@ -139,13 +143,11 @@ class VerifyEmailView(APIView):
         if user is not None and default_token_generator.check_token(user,token):
             user.is_active = True
             user.save()
-            return Response({
-                'msg': 'Email successfully verified'
-            })
+            return redirect("http://localhost:3000/accounts/verify")
         else:
              return Response({
                 'msg': 'Email verification failed'
-            })
+            },status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLoginView(APIView):
@@ -172,11 +174,12 @@ class UserLoginView(APIView):
             return Response({
                 'access': str(refresh.access_token),
                 'refresh': str(refresh),
-            }
+            },
+            status=status.HTTP_200_OK
             )
         return Response({
             'msg':'not able to login'
-        })
+        },status=status.HTTP_400_BAD_REQUEST)
 
 class UserLogoutView(APIView):
     """
@@ -199,17 +202,17 @@ class UserLogoutView(APIView):
         if not refresh_token:
             return Response({
                 'msg':'no refresh token'
-            })
+            },status=status.HTTP_400_BAD_REQUEST)
         try:
             token = RefreshToken(refresh_token)
             token.blacklist()
             return Response({
                 'msg':'logout successful'
-            })
+            },status=status.HTTP_200_OK)
         except Exception as e:
             return Response({
                 'msg': f'{e}'
-            })
+            },status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 class UserChangePassword(APIView):
     """
     API view to handle password change requests.

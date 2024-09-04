@@ -1,10 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { actions, logoutUser } from "@/lib/store";
 
 const Navbar = () => {
-  const [isAuth, setIsAuth] = useState(false);
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  let isAuth = useAppSelector((state) => state.users.isAuthenticated);
+  const handlelogout = async () => {
+    const token = Cookies.get("refreshToken");
+    if (token) {
+      try {
+        const response = await dispatch(logoutUser(token));
+        console.log(response);
+        if (response.payload.status == 200) {
+          dispatch(actions.logout());
+          Cookies.remove("accessToken");
+          Cookies.remove("refreshToken");
+          router.push("/accounts/login");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
   return (
     <>
       <div className="max-w-[1400px] m-auto flex justify-between items-center mt-[48px] h-[38px] mb-[16px]">
@@ -15,9 +37,14 @@ const Navbar = () => {
           <Link href="/home">Home</Link>
           <Link href="/contact">Contact</Link>
           {isAuth ? (
-            <li>
-              <Link href="/profile">Profile</Link>
-            </li>
+            <>
+              <li>
+                <Link href="/profile">Profile</Link>
+              </li>
+              <li>
+                <button onClick={handlelogout}>Logout</button>
+              </li>
+            </>
           ) : (
             <>
               <li>

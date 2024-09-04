@@ -5,28 +5,46 @@ import { loginSchema } from "@/app/validations/schema";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-interface LoginFormValues {
-  email: string;
-  password: string;
-}
+import { useAppDispatch } from "@/lib/hooks";
+import { actions, loginUser } from "@/lib/store";
+import Cookies from "js-cookie";
+import { loginUserType } from "@/types/userTypes";
 
-const initialValues: LoginFormValues = {
+const initialValues: loginUserType = {
   email: "",
   password: "",
 };
 
 const page = () => {
+  const [loginSuccess, setLoginSuccess] = useState<boolean>(true); // for invalid email or password error
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const { values, errors, handleChange, handleSubmit } =
-    useFormik<LoginFormValues>({
+    useFormik<loginUserType>({
       initialValues,
       onSubmit: async (values) => {
         console.log(values);
-        router.push("/profile");
+        try {
+          const response: any = await dispatch(loginUser(values));
+          console.log(response);
+          if (response.payload.status == 200) {
+            console.log("login successful");
+            dispatch(actions.login());
+            Cookies.set("accessToken", response.payload.data.access);
+            Cookies.set("refreshToken", response.payload.data.refresh);
+            router.push("/profile");
+          } else {
+            console.log("login failed");
+            setLoginSuccess(false);
+          }
+          return response;
+        } catch (error: any) {
+          console.log(error.response.data);
+        }
       },
       validationSchema: toFormikValidationSchema(loginSchema),
     });
-  const [data, setData] = useState<LoginFormValues>(initialValues);
+  const [data, setData] = useState<loginUserType>(initialValues);
   return (
     <div className="flex justify-center h-screen my-[50px]">
       <div className="">
@@ -72,6 +90,13 @@ const page = () => {
             <button type="submit" className="bg-black py-2 w-full text-white">
               Login
             </button>
+          </div>
+          <div>
+            {!loginSuccess && (
+              <div className="text-red-900 text-sm">
+                Invalid Email or Password
+              </div>
+            )}
           </div>
         </form>
       </div>
