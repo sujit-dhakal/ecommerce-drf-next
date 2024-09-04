@@ -7,13 +7,17 @@ export interface User {
   confirm_password: string;
 }
 
-export interface loginUser {
+export interface loginUserType {
   email: string;
   password: string;
 }
 
 export interface userState {
-  user: User;
   isLoading: boolean;
   isError: boolean;
+  isAuthenticated: boolean;
+}
+
+export interface logoutUser {
+  refresh_token: string;
 }

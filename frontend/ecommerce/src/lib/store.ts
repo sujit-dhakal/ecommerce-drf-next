@@ -1,7 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { buildUserSlice } from "./features/authentication/authSlice";
 
-const { userSlice, registerUser } = buildUserSlice();
+const { userSlice, registerUser, loginUser, logoutUser, actions } =
+  buildUserSlice();
 
 const makeStore = () => {
   return configureStore({
@@ -10,7 +11,7 @@ const makeStore = () => {
     },
   });
 };
-export { makeStore, registerUser };
+export { makeStore, registerUser, loginUser, logoutUser, actions };
 export type AppStore = ReturnType<typeof makeStore>;
 export type RootState = ReturnType<AppStore["getState"]>;
 export type AppDispatch = AppStore["dispatch"];

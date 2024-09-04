@@ -25,26 +25,36 @@ const initialValues: RegistrationFormValues = {
   confirm_password: "",
 };
 const page = () => {
+  const [isRegistered, setIsRegistered] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const formik = useFormik<RegistrationFormValues>({
     initialValues,
     validationSchema: toFormikValidationSchema(registrationSchema),
     onSubmit: async (values, { resetForm }) => {
-      console.log(values);
+      setIsRegistered(true);
       try {
         dispatch(registerUser(values));
       } catch (error: any) {
         console.log(error.response.data);
       }
       resetForm();
+      setTimeout(() => {
+        setIsRegistered(false);
+      }, 10000);
     },
   });
-  const [data, setData] = useState<RegistrationFormValues>(initialValues);
   return (
     <div className="flex justify-center h-screen my-[50px]">
       {/* side image */}
       {/* signup form */}
       <div className="">
+        {isRegistered ? (
+          <div className="text-white bg-green-600">
+            Check your mail to verify the account.
+          </div>
+        ) : (
+          <div></div>
+        )}
         <form onSubmit={formik.handleSubmit}>
           <div className="text-center">
             <h1 className="text-3xl mb-4">Sign Up</h1>
