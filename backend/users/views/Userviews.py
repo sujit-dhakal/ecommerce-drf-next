@@ -89,7 +89,7 @@ class UserDetailView(APIView):
         self.obj.deleteUser(uid)
         return Response({
             'msg':f'user with uid: {uid} deleted successfully'
-        })
+        },status=status.HTTP_200_OK)
 
 class UserRegisterView(APIView):
     """
@@ -147,7 +147,7 @@ class VerifyEmailView(APIView):
         else:
              return Response({
                 'msg': 'Email verification failed'
-            },status=status.HTTP_400_BAD_REQUEST)
+            })
 
 
 class UserLoginView(APIView):
@@ -179,7 +179,7 @@ class UserLoginView(APIView):
             )
         return Response({
             'msg':'not able to login'
-        },status=status.HTTP_400_BAD_REQUEST)
+        })
 
 class UserLogoutView(APIView):
     """
@@ -202,7 +202,7 @@ class UserLogoutView(APIView):
         if not refresh_token:
             return Response({
                 'msg':'no refresh token'
-            },status=status.HTTP_400_BAD_REQUEST)
+            })
         try:
             token = RefreshToken(refresh_token)
             token.blacklist()
@@ -212,7 +212,7 @@ class UserLogoutView(APIView):
         except Exception as e:
             return Response({
                 'msg': f'{e}'
-            },status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            })
 class UserChangePassword(APIView):
     """
     API view to handle password change requests.
@@ -294,3 +294,23 @@ class UserResetPasswordView(APIView):
         return Response({
                 'msg':'password reset unsuccessful'
             })
+
+class EmailAlreadyExists(APIView):
+    def get(self,request,email):
+        if email and CustomUser.objects.filter(email=email).exists():
+            return Response({
+                'email': 'user with this email already exists.',
+                'status': 400
+            })
+        else:
+            return Response(status=status.HTTP_200_OK)
+
+class UserNameAlreadyExists(APIView):
+    def get(self,request,name):
+        if name and CustomUser.objects.filter(username=name).exists():
+            return Response({
+                'username': 'username already exists.',
+                'status':400
+            })
+        else:
+            return Response(status=status.HTTP_200_OK)

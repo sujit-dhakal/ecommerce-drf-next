@@ -5,7 +5,7 @@ import { registrationSchema } from "@/app/validations/schema";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import Link from "next/link";
 import { useAppDispatch } from "@/lib/hooks";
-import { registerUser } from "@/lib/store";
+import { checkEmail, registerUser, checkUserName } from "@/lib/store";
 
 interface RegistrationFormValues {
   email: string;
@@ -25,22 +25,42 @@ const initialValues: RegistrationFormValues = {
   confirm_password: "",
 };
 const page = () => {
+  const [userNameAlreadyExist, setUserNameAlreadyExist] =
+    useState<boolean>(false);
+  const [emailAlreadyExist, setEmailAlreadyExist] = useState<boolean>(false);
   const [isRegistered, setIsRegistered] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const formik = useFormik<RegistrationFormValues>({
     initialValues,
     validationSchema: toFormikValidationSchema(registrationSchema),
     onSubmit: async (values, { resetForm }) => {
-      setIsRegistered(true);
       try {
-        dispatch(registerUser(values));
+        const checkEmailReponse = await dispatch(checkEmail(values.email));
+        console.log(checkEmailReponse);
+        if (checkEmailReponse.payload.data.status == 400) {
+          setEmailAlreadyExist(true);
+          return;
+        }
+        const checkUserNameResponse = await dispatch(
+          checkUserName(values.username)
+        );
+        console.log(checkUserNameResponse);
+        if (checkUserNameResponse.payload.data.status == 400) {
+          setUserNameAlreadyExist(true);
+          return;
+        }
+        const response: any = dispatch(registerUser(values));
+        setIsRegistered(true);
+        console.log(response);
       } catch (error: any) {
         console.log(error.response.data);
       }
       resetForm();
       setTimeout(() => {
         setIsRegistered(false);
-      }, 10000);
+        setUserNameAlreadyExist(false);
+        setEmailAlreadyExist(false);
+      }, 5000);
     },
   });
   return (
@@ -48,13 +68,6 @@ const page = () => {
       {/* side image */}
       {/* signup form */}
       <div className="">
-        {isRegistered ? (
-          <div className="text-white bg-green-600">
-            Check your mail to verify the account.
-          </div>
-        ) : (
-          <div></div>
-        )}
         <form onSubmit={formik.handleSubmit}>
           <div className="text-center">
             <h1 className="text-3xl mb-4">Sign Up</h1>
@@ -77,6 +90,13 @@ const page = () => {
               <div className="text-red-900 text-sm mb-[-20px]">
                 {formik.errors.email}
               </div>
+            )}
+            {emailAlreadyExist ? (
+              <div className="text-red-900 text-sm mb-[-20px]">
+                Email already exists..
+              </div>
+            ) : (
+              <div></div>
             )}
           </div>
           {/* firstname */}
@@ -120,6 +140,13 @@ const page = () => {
                 {formik.errors.username}
               </div>
             )}
+            {userNameAlreadyExist ? (
+              <div className="text-red-900 text-sm mb-[-20px]">
+                UserNameAlreadyExists.
+              </div>
+            ) : (
+              <div></div>
+            )}
           </div>
           {/* password */}
           <div className="mt-6">
@@ -156,6 +183,13 @@ const page = () => {
             </button>
           </div>
         </form>
+        {isRegistered ? (
+          <div className="text-green-800">
+            Check your mail to verify the account.
+          </div>
+        ) : (
+          <div></div>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { UserApi } from "@/api/userAPI/userApi";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { loginUser, User } from "@/types/userTypes";
+import { loginUserType, User } from "@/types/userTypes";
 const userApi = new UserApi();
 
 export const registerUserThunk = () => {
@@ -19,9 +19,9 @@ export const registerUserThunk = () => {
 };
 
 export const loginUserThunk = () => {
-  return createAsyncThunk<loginUser, loginUser>(
+  return createAsyncThunk<loginUserType, loginUserType>(
     "user/loginUser",
-    async (user: loginUser) => {
+    async (user: loginUserType) => {
       try {
         const response = await userApi.loginUser(user);
         return response;
@@ -36,7 +36,28 @@ export const loginUserThunk = () => {
 export const logoutUserThunk = () => {
   return createAsyncThunk("user/logout", async (token: string) => {
     try {
-      const response = await userApi.logOut(token);
+      const response = await userApi.logout(token);
+      return response;
+    } catch (error: any) {
+      return error.response.data;
+    }
+  });
+};
+
+export const checkEmailThunk = () => {
+  return createAsyncThunk("check-email", async (email: string) => {
+    try {
+      const response = await userApi.checkEmail(email);
+      return response;
+    } catch (error: any) {
+      return error.response.data;
+    }
+  });
+};
+export const checkUserNameThunk = () => {
+  return createAsyncThunk("check-userName", async (name: string) => {
+    try {
+      const response = await userApi.checkUserName(name);
       return response;
     } catch (error: any) {
       return error.response.data;

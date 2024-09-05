@@ -1,9 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { userState, User, loginUserType, logoutUser } from "@/types/userTypes";
+import { userState } from "@/types/userTypes";
 import {
   loginUserThunk,
   logoutUserThunk,
   registerUserThunk,
+  checkEmailThunk,
+  checkUserNameThunk,
 } from "./userThunk";
 
 const initialState: userState = {
@@ -16,6 +18,8 @@ export const buildUserSlice = () => {
   const registerUser = registerUserThunk();
   const loginUser = loginUserThunk();
   const logoutUser = logoutUserThunk();
+  const checkEmail = checkEmailThunk();
+  const checkUserName = checkUserNameThunk();
   const userSlice = createSlice({
     name: "user",
     initialState,
@@ -71,5 +75,7 @@ export const buildUserSlice = () => {
     registerUser,
     loginUser,
     logoutUser,
+    checkEmail,
+    checkUserName,
   };
 };
