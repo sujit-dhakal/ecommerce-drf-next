@@ -1,7 +1,7 @@
 "use client";
 import { useFormik } from "formik";
 import { useState } from "react";
-import { loginSchema } from "@/app/validations/schema";
+import { loginSchema } from "../../validations/schema";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,6 +9,7 @@ import { useAppDispatch } from "@/lib/hooks";
 import { actions, loginUser } from "@/lib/store";
 import Cookies from "js-cookie";
 import { loginUserType } from "@/types/userTypes";
+import { useTranslations } from "next-intl";
 
 const initialValues: loginUserType = {
   email: "",
@@ -16,6 +17,7 @@ const initialValues: loginUserType = {
 };
 
 const page = () => {
+  const t = useTranslations("login");
   const [loginSuccess, setLoginSuccess] = useState<boolean>(true); // for invalid email or password error
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -44,12 +46,13 @@ const page = () => {
       },
       validationSchema: toFormikValidationSchema(loginSchema),
     });
+  const [data, setData] = useState<loginUserType>(initialValues);
   return (
     <div className="flex justify-center h-screen my-[50px]">
       <div className="">
         <form onSubmit={handleSubmit}>
           <div className="text-center">
-            <h1 className="text-3xl mb-4">Login</h1>
+            <h1 className="text-3xl mb-4">{t("heading")}</h1>
           </div>
           {/* email */}
           <div className="mt-6">
@@ -80,14 +83,14 @@ const page = () => {
             )}
           </div>
           <div className="mt-6">
-            Not a User?{" "}
+            {t("notAUser")}
             <Link href="/accounts/signup">
-              <span className="text-blue-700">Create an account</span>
+              <span className="text-blue-700">{t("createAccount")}</span>
             </Link>
           </div>
           <div className="mt-6 flex justify-center">
             <button type="submit" className="bg-black py-2 w-full text-white">
-              Login
+              {t("login")}
             </button>
           </div>
           <div>

@@ -1,0 +1,20 @@
+{
+  "NavBar": {
+    "Home": "गृहपृष्ठ",
+    "Contact": "सम्पर्क",
+    "Login": "लगइन",
+    "SignUp": "साइनअप"
+  },
+  "SignUp": {
+    "heading": "साइन अप गर्नुहोस्",
+    "alreadyHaveAnAccount": "खाता पहिले नै छ? ",
+    "login": "लगइन गर्नुहोस्",
+    "createAccount": "खाता सिर्जना गर्नुहोस्"
+  },
+  "login": {
+    "heading": "लगइन गर्नुहोस्",
+    "login": "लगइन गर्नुहोस्",
+    "notAUser": "प्रयोगकर्ता होइन? ",
+    "createAccount": "खाता सिर्जना गर्नुहोस्"
+  }
+}

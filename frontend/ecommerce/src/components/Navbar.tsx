@@ -2,13 +2,16 @@
 
 import Link from "next/link";
 import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { actions, logoutUser } from "@/lib/store";
+import { useTranslations, useLocale } from "next-intl";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
+  const t = useTranslations("NavBar");
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const locale = useLocale();
   let isAuth = useAppSelector((state) => state.user.isAuthenticated);
   const handlelogout = async () => {
     const token = Cookies.get("refreshToken");
@@ -34,8 +37,8 @@ const Navbar = () => {
           <Link href="/">EcomNepal</Link>
         </div>
         <div className="text-1xl list-none flex gap-5 items-center">
-          <Link href="/home">Home</Link>
-          <Link href="/contact">Contact</Link>
+          <Link href={`/${locale}/home`}>{t("Home")}</Link>
+          <Link href={`/${locale}/contact`}>{t("Contact")}</Link>
           {isAuth ? (
             <>
               <li>
@@ -48,10 +51,10 @@ const Navbar = () => {
           ) : (
             <>
               <li>
-                <Link href="/accounts/signup">SignUp</Link>
+                <Link href={`/${locale}/accounts/signup`}>{t("SignUp")}</Link>
               </li>
               <li>
-                <Link href="/accounts/login">Login</Link>
+                <Link href={`/${locale}/accounts/login`}>{t("Login")}</Link>
               </li>
             </>
           )}
