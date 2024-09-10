@@ -1,11 +1,12 @@
 "use client";
 import { useState } from "react";
 import { useFormik } from "formik";
-import { registrationSchema } from "@/app/validations/schema";
+import { registrationSchema } from "../../validations/schema";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import Link from "next/link";
 import { useAppDispatch } from "@/lib/hooks";
 import { checkEmail, registerUser, checkUserName } from "@/lib/store";
+import { useTranslations } from "next-intl";
 
 interface RegistrationFormValues {
   email: string;
@@ -25,6 +26,7 @@ const initialValues: RegistrationFormValues = {
   confirm_password: "",
 };
 const page = () => {
+  const t = useTranslations("SignUp");
   const [userNameAlreadyExist, setUserNameAlreadyExist] =
     useState<boolean>(false);
   const [emailAlreadyExist, setEmailAlreadyExist] = useState<boolean>(false);
@@ -70,11 +72,11 @@ const page = () => {
       <div className="">
         <form onSubmit={formik.handleSubmit}>
           <div className="text-center">
-            <h1 className="text-3xl mb-4">Sign Up</h1>
+            <h1 className="text-3xl mb-4">{t("heading")}</h1>
             <h1 className="mb-4">
-              Already have an account?{" "}
+              {t("alreadyHaveAnAccount")}
               <Link href="/accounts/login">
-                <span className="text-blue-700">Login</span>
+                <span className="text-blue-700">{t("login")}</span>
               </Link>
             </h1>
           </div>
@@ -179,7 +181,7 @@ const page = () => {
           </div>
           <div className="mt-6 flex justify-center">
             <button type="submit" className="bg-black py-2 w-full text-white">
-              Create Account
+              {t("createAccount")}
             </button>
           </div>
         </form>

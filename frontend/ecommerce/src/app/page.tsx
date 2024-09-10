@@ -1,7 +1,5 @@
-import Navbar from "@/components/Navbar";
+import { redirect } from "next/navigation";
 
-const page = () => {
-  return <div>page</div>;
-};
+const page = () => redirect("/en");
 
 export default page;
