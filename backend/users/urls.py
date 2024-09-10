@@ -1,5 +1,5 @@
 from django.urls import path
-from users.views.Userviews import UserListView,UserDetailView,UserRegisterView,UserLoginView,UserLogoutView,UserChangePassword,SendPasswordResetEmailView,UserResetPasswordView,VerifyEmailView,EmailAlreadyExists,UserNameAlreadyExists
+from users.views.Userviews import UserListView,UserDetailView,UserRegisterView,UserLoginView,UserLogoutView,UserChangePassword,SendPasswordResetEmailView,UserResetPasswordView,VerifyEmailView,EmailAlreadyExists,UserNameAlreadyExists,UserProfile
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
@@ -16,5 +16,6 @@ urlpatterns = [
     path('email-verify/<str:uid>/<str:token>/',VerifyEmailView.as_view(),name='email-verify'),
     path('token/refresh/',TokenRefreshView.as_view(),name='token_refresh'),
     path('check-email/<str:email>/',EmailAlreadyExists.as_view(),name="check-email"),
-    path('check-username/<str:name>/',UserNameAlreadyExists.as_view(),name="check-name")
+    path('check-username/<str:name>/',UserNameAlreadyExists.as_view(),name="check-name"),
+    path('user-profile/',UserProfile.as_view(),name="user-profile")
 ]

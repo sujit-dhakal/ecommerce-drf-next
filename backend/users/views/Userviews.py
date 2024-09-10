@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from users.services.UserService import UserService
 from rest_framework.response import Response
-from users.serializers.serializers import UserSerializer,UserChangePasswordSerializer,UserLoginSerializer,UserRegistrationSerializer,SendResetPasswordEmailSerializer,UserResetPasswordSerializer
+from users.serializers.serializers import UserSerializer,UserChangePasswordSerializer,UserLoginSerializer,UserRegistrationSerializer,SendResetPasswordEmailSerializer,UserResetPasswordSerializer,UserProfileSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.http import urlsafe_base64_decode
@@ -9,6 +9,7 @@ from users.models import CustomUser
 from django.contrib.auth.tokens import default_token_generator
 from rest_framework.views import status
 from django.shortcuts import redirect
+from rest_framework import generics
 
 class UserListView(APIView):
     """
@@ -314,3 +315,10 @@ class UserNameAlreadyExists(APIView):
             })
         else:
             return Response(status=status.HTTP_200_OK)
+
+class UserProfile(generics.RetrieveAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user

@@ -9,7 +9,7 @@ import { actions, logoutUser } from "@/lib/store";
 const Navbar = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  let isAuth = useAppSelector((state) => state.users.isAuthenticated);
+  let isAuth = useAppSelector((state) => state.user.isAuthenticated);
   const handlelogout = async () => {
     const token = Cookies.get("refreshToken");
     if (token) {

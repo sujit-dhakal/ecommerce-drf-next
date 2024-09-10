@@ -13,6 +13,11 @@ export interface loginUserType {
 }
 
 export interface userState {
+  user: {
+    username: string;
+    first_name: string;
+    last_name: string;
+  };
   isLoading: boolean;
   isError: boolean;
   isAuthenticated: boolean;
@@ -20,4 +25,11 @@ export interface userState {
 
 export interface logoutUser {
   refresh_token: string;
+}
+
+export interface Product {
+  name: string;
+  price: number;
+  stock: number;
+  description: string;
 }

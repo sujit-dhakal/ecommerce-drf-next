@@ -64,3 +64,14 @@ export const checkUserNameThunk = () => {
     }
   });
 };
+
+export const userProfileThunk = () => {
+  return createAsyncThunk("user-profile", async () => {
+    try {
+      const response = await userApi.userProfile();
+      return response;
+    } catch (error: any) {
+      return error.response.data;
+    }
+  });
+};
