@@ -3,6 +3,10 @@ import { client } from "../baseConfig";
 import { loginUserType, User } from "@/types/userTypes";
 
 export class UserApi implements IUserApi {
+  async userProfile(): Promise<User> {
+    const response = await client.get("user-profile");
+    return response.data;
+  }
   async checkUserName(name: string) {
     const response = await client.get(`check-username/${name}/`);
     return {

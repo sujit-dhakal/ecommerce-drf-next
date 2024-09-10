@@ -7,4 +7,5 @@ export interface IUserApi {
   logout(token: string): any;
   checkEmail(email: string): any;
   checkUserName(name: string): any;
+  userProfile(): Promise<User>;
 }

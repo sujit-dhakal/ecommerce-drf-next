@@ -44,7 +44,6 @@ const page = () => {
       },
       validationSchema: toFormikValidationSchema(loginSchema),
     });
-  const [data, setData] = useState<loginUserType>(initialValues);
   return (
     <div className="flex justify-center h-screen my-[50px]">
       <div className="">
