@@ -26,10 +26,3 @@ export interface userState {
 export interface logoutUser {
   refresh_token: string;
 }
-
-export interface Product {
-  name: string;
-  price: number;
-  stock: number;
-  description: string;
-}

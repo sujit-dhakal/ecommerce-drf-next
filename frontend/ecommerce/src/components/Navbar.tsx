@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { actions, logoutUser } from "@/lib/store";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
+import SearchBar from "./search/SearchBar";
 
 const Navbar = () => {
   const t = useTranslations("NavBar");
@@ -60,11 +61,7 @@ const Navbar = () => {
           )}
         </div>
         <div>
-          <input
-            type="text"
-            className="bg-gray-100 h-[38px] text-center text-[13px] w-[243px]"
-            placeholder="What are you looking for?"
-          />
+          <SearchBar />
         </div>
       </div>
       <div>
