@@ -9,7 +9,7 @@ import { useAppDispatch } from "@/lib/hooks";
 import { actions, loginUser } from "@/lib/store";
 import Cookies from "js-cookie";
 import { loginUserType } from "@/types/userTypes";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 const initialValues: loginUserType = {
   email: "",
@@ -18,6 +18,7 @@ const initialValues: loginUserType = {
 
 const page = () => {
   const t = useTranslations("login");
+  const locale = useLocale();
   const [loginSuccess, setLoginSuccess] = useState<boolean>(true); // for invalid email or password error
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -84,7 +85,7 @@ const page = () => {
           </div>
           <div className="mt-6">
             {t("notAUser")}
-            <Link href="/accounts/signup">
+            <Link href={`/${locale}/accounts/signup`}>
               <span className="text-blue-700">{t("createAccount")}</span>
             </Link>
           </div>

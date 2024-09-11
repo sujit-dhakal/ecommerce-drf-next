@@ -6,7 +6,7 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 import Link from "next/link";
 import { useAppDispatch } from "@/lib/hooks";
 import { checkEmail, registerUser, checkUserName } from "@/lib/store";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 interface RegistrationFormValues {
   email: string;
@@ -27,6 +27,7 @@ const initialValues: RegistrationFormValues = {
 };
 const page = () => {
   const t = useTranslations("SignUp");
+  const locale = useLocale();
   const [userNameAlreadyExist, setUserNameAlreadyExist] =
     useState<boolean>(false);
   const [emailAlreadyExist, setEmailAlreadyExist] = useState<boolean>(false);
@@ -75,7 +76,7 @@ const page = () => {
             <h1 className="text-3xl mb-4">{t("heading")}</h1>
             <h1 className="mb-4">
               {t("alreadyHaveAnAccount")}
-              <Link href="/accounts/login">
+              <Link href={`/${locale}/accounts/login`}>
                 <span className="text-blue-700">{t("login")}</span>
               </Link>
             </h1>
