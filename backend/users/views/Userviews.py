@@ -1,12 +1,15 @@
 from rest_framework.views import APIView
 from users.services.UserService import UserService
 from rest_framework.response import Response
-from users.serializers.serializers import UserSerializer,UserChangePasswordSerializer,UserLoginSerializer,UserRegistrationSerializer,SendResetPasswordEmailSerializer,UserResetPasswordSerializer
+from users.serializers.serializers import UserSerializer,UserChangePasswordSerializer,UserLoginSerializer,UserRegistrationSerializer,SendResetPasswordEmailSerializer,UserResetPasswordSerializer,UserProfileSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.http import urlsafe_base64_decode
 from users.models import CustomUser
 from django.contrib.auth.tokens import default_token_generator
+from rest_framework.views import status
+from django.shortcuts import redirect
+from rest_framework import generics
 
 class UserListView(APIView):
     """
@@ -30,7 +33,7 @@ class UserListView(APIView):
         """
         users = self.obj.getUsers()
         serializer = UserSerializer(users,many=True)
-        return Response(serializer.data)
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
 class UserDetailView(APIView):
     """
@@ -55,7 +58,7 @@ class UserDetailView(APIView):
         """
         user = self.obj.getUserById(uid)
         serializer = UserSerializer(user)
-        return Response(serializer.data)
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
     def put(self,request,uid):
         """
@@ -71,7 +74,7 @@ class UserDetailView(APIView):
         self.obj.updateUser(uid,**request.data)
         user = self.obj.getUserById(request.data.get('user_id',uid))
         serializer = UserSerializer(user)
-        return Response(serializer.data)
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
     def delete(self,request,uid):
         """
@@ -87,7 +90,7 @@ class UserDetailView(APIView):
         self.obj.deleteUser(uid)
         return Response({
             'msg':f'user with uid: {uid} deleted successfully'
-        })
+        },status=status.HTTP_200_OK)
 
 class UserRegisterView(APIView):
     """
@@ -108,10 +111,12 @@ class UserRegisterView(APIView):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(serializer.data)
+            return Response({
+                'msg':'created user successfully'
+            },status=status.HTTP_200_OK)
         return Response({
             'msg':'failed to create user'
-        })
+        },status=status.HTTP_400_BAD_REQUEST)
 
 class VerifyEmailView(APIView):
     """
@@ -139,9 +144,7 @@ class VerifyEmailView(APIView):
         if user is not None and default_token_generator.check_token(user,token):
             user.is_active = True
             user.save()
-            return Response({
-                'msg': 'Email successfully verified'
-            })
+            return redirect("http://localhost:3000/accounts/verify")
         else:
              return Response({
                 'msg': 'Email verification failed'
@@ -172,7 +175,8 @@ class UserLoginView(APIView):
             return Response({
                 'access': str(refresh.access_token),
                 'refresh': str(refresh),
-            }
+            },
+            status=status.HTTP_200_OK
             )
         return Response({
             'msg':'not able to login'
@@ -205,7 +209,7 @@ class UserLogoutView(APIView):
             token.blacklist()
             return Response({
                 'msg':'logout successful'
-            })
+            },status=status.HTTP_200_OK)
         except Exception as e:
             return Response({
                 'msg': f'{e}'
@@ -291,3 +295,30 @@ class UserResetPasswordView(APIView):
         return Response({
                 'msg':'password reset unsuccessful'
             })
+
+class EmailAlreadyExists(APIView):
+    def get(self,request,email):
+        if email and CustomUser.objects.filter(email=email).exists():
+            return Response({
+                'email': 'user with this email already exists.',
+                'status': 400
+            })
+        else:
+            return Response(status=status.HTTP_200_OK)
+
+class UserNameAlreadyExists(APIView):
+    def get(self,request,name):
+        if name and CustomUser.objects.filter(username=name).exists():
+            return Response({
+                'username': 'username already exists.',
+                'status':400
+            })
+        else:
+            return Response(status=status.HTTP_200_OK)
+
+class UserProfile(generics.RetrieveAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user

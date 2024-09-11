@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = CustomUser
-        fields = ['user_id','email',"first_name","last_name","is_active","is_staff","is_superuser"]
+        fields = '__all__'
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     """
@@ -263,3 +263,8 @@ class UserResetPasswordSerializer(serializers.Serializer):
         user.set_password(password1)
         user.save()
         return attrs
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['username','first_name','last_name']
