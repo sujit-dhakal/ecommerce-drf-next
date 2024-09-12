@@ -1,14 +1,16 @@
-import { Product } from "@/types/userTypes";
+import { Product } from "@/types/productTypes";
+import ProductCard from "./ProductCard";
 
-interface ProductList {
+export interface ProductList {
   products: Product[];
+  product: Product;
 }
 
 const ProductList: React.FC<ProductList> = ({ products }) => {
   return (
     <div>
-      {products.map((product: Product) => (
-        <li>{product.name}</li>
+      {products.map((product) => (
+        <ProductCard product={product} />
       ))}
     </div>
   );

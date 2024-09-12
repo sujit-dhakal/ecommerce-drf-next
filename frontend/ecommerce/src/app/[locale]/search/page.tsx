@@ -7,7 +7,7 @@ const page = () => {
   const searchParams = useSearchParams();
   const query = searchParams.get("query");
   const dispatch = useAppDispatch();
-  const products = useAppSelector((state) => state.product.product);
+  const products = useAppSelector((state) => state.product.products);
 
   useEffect(() => {
     if (query) {
@@ -16,7 +16,7 @@ const page = () => {
   }, [query]);
   return (
     <div>
-      <h1>Search Results</h1>
+      <h1>Search Result: Found {products.length} products</h1>
       {products.map((product) => (
         <li>{product.name}</li>
       ))}

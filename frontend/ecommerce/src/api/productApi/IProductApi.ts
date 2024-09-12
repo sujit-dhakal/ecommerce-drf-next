@@ -1,4 +1,5 @@
-import { Product } from "@/types/userTypes";
+import { Product } from "@/types/productTypes";
 export interface IProductApi {
-  getProduct(query: string): Promise<Product[]>;
+  getProducts(query: string): Promise<Product[]>;
+  getProductDetail(productId: string): Promise<Product>;
 }

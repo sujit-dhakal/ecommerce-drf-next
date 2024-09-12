@@ -35,7 +35,7 @@ const page = () => {
             dispatch(actions.login());
             Cookies.set("accessToken", response.payload.data.access);
             Cookies.set("refreshToken", response.payload.data.refresh);
-            router.push("/profile");
+            router.push(`/${locale}/profile`);
           } else {
             console.log("login failed");
             setLoginSuccess(false);

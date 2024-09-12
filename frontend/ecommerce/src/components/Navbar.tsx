@@ -24,7 +24,7 @@ const Navbar = () => {
           dispatch(actions.logout());
           Cookies.remove("accessToken");
           Cookies.remove("refreshToken");
-          router.push("/accounts/login");
+          router.push(`/${locale}/accounts/login`);
         }
       } catch (error) {
         console.log(error);
@@ -43,10 +43,13 @@ const Navbar = () => {
           {isAuth ? (
             <>
               <li>
-                <Link href="/profile">Profile</Link>
+                <Link href={`/${locale}/profile`}>Profile</Link>
               </li>
               <li>
                 <button onClick={handlelogout}>Logout</button>
+              </li>
+              <li>
+                <Link href={`/${locale}/cart`}>Cart</Link>
               </li>
             </>
           ) : (
