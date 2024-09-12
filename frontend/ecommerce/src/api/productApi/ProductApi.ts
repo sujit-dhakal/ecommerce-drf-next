@@ -1,9 +1,13 @@
-import { Product } from "@/types/userTypes";
+import { Product } from "@/types/productTypes";
 import { IProductApi } from "./IProductApi";
 import { client } from "../baseConfig";
 
 export class ProductApi implements IProductApi {
-  async getProduct(query: string): Promise<Product[]> {
+  async getProductDetail(productId: string): Promise<Product> {
+    const response = await client.get(`product/${productId}`);
+    return response.data;
+  }
+  async getProducts(query: string): Promise<Product[]> {
     const response = await client.get("products/", {
       params: { name: query },
     });
