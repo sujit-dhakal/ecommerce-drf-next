@@ -3,7 +3,6 @@ from users.models import CustomUser
 
 class ShippingAddress(models.Model):
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
-    address = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
     state = models.CharField(max_length=255)
     postal_code = models.CharField(max_length=255)

@@ -4,7 +4,7 @@ from shipping.models import ShippingAddress
 class ShippingAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShippingAddress
-        fields = ['address','city','country','state','postal_code','is_default']
+        fields = ['city','country','state','postal_code','is_default']
 
     def create(self,validated_data):
         if validated_data.get('is_default'):

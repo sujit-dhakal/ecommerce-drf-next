@@ -6,7 +6,6 @@ import { useFormik } from "formik";
 import React from "react";
 
 const initialValues: ShippingAddress = {
-  address: "",
   state: "",
   country: "",
   postal_code: "",
@@ -28,13 +27,6 @@ const page = () => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="address"
-          name="address"
-          onChange={handleChange}
-          value={values.address}
-        />
         <input
           type="text"
           placeholder="city"

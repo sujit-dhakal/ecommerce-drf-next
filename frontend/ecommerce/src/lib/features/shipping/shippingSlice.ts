@@ -8,7 +8,6 @@ import { ShippingAddress, ShippingAddressState } from "@/types/shippingTypes";
 const initialState: ShippingAddressState = {
   address: {
     city: "",
-    address: "",
     country: "",
     state: "",
     postal_code: "",
