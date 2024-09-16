@@ -8,8 +8,12 @@ import {
   removeCartItem,
   updateCartItem,
 } from "@/lib/store";
+import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 
 const page = () => {
+  const router = useRouter();
+  const locale = useLocale();
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector((state) => state.cart.itemsInCart);
   const sum = useAppSelector((state) => state.cart.sum);
@@ -37,6 +41,10 @@ const page = () => {
     await dispatch(updateCartItem({ productId, newQuantity }));
     await fetchData();
     await fetchSum();
+  };
+
+  const handleProceed = () => {
+    router.push(`/${locale}/payment/`);
   };
   useEffect(() => {
     fetchData();
@@ -89,6 +97,7 @@ const page = () => {
         </div>
       ))}
       <h1>{sum}</h1>
+      <button onClick={handleProceed}>Proceed to Checkout</button>
     </div>
   );
 };
