@@ -8,7 +8,8 @@
   "SignUp": {
     "heading": "Sign Up",
     "alreadyHaveAnAccount": "Already have an account?",
-    "login": "Login"
+    "login": "Login",
+    "createAccount": "Create Account"
   },
   "login": {
     "heading": "Login",

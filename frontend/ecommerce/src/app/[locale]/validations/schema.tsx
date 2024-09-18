@@ -36,3 +36,18 @@ export const loginSchema = z.object({
     required_error: "Password is required.",
   }),
 });
+
+export const shippingSchema = z.object({
+  city: z.string({
+    required_error: "City is required",
+  }),
+  country: z.string({
+    required_error: "Country is required",
+  }),
+  state: z.string({
+    required_error: "City is required",
+  }),
+  postal_code: z.string({
+    required_error: "postal code is required",
+  }),
+});
