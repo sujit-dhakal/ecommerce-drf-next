@@ -3,7 +3,6 @@ import ProductCard from "./ProductCard";
 
 export interface ProductList {
   products: Product[];
-  product: Product;
 }
 
 const ProductList: React.FC<ProductList> = ({ products }) => {
