@@ -1,9 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { useLocale } from "next-intl";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { getCartSum, getCartItems, getShippingAddress } from "@/lib/store";
+import Paypal from "@/components/paypal/Paypal";
 
 const page = () => {
   const sum = useAppSelector((state) => state.cart.sum);
@@ -11,7 +12,6 @@ const page = () => {
   const address = useAppSelector((state) => state.shipping.address);
   const locale = useLocale();
   const dispatch = useAppDispatch();
-  const [paymentMethod, setPaymentMethod] = useState("paypal");
   const fetchAddress = async () => {
     const response = await dispatch(getShippingAddress());
     console.log(response);
@@ -29,59 +29,30 @@ const page = () => {
     fetchCart();
     fetchSum();
   }, []);
-  const handlePaymentMethodChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setPaymentMethod(event.target.value);
-  };
   return (
     <>
       <div>
         {address.city} {address.country}
       </div>
       <div>
-        <h1>Select payment method</h1>
-        <label>
-          <input
-            type="radio"
-            name="paymentmethod"
-            value="paypal"
-            checked={paymentMethod === "paypal"}
-            onChange={handlePaymentMethodChange}
-          />
-          Paypal
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="paymentmethod"
-            value="esewa"
-            checked={paymentMethod === "esewa"}
-            onChange={handlePaymentMethodChange}
-          />
-          Esewa
-        </label>
-      </div>
-      <div>
         {cartItems.map((item) => (
-          <>
+          <div key={item.product.id}>
             <Link href={`/${locale}/product/${item.product.id}`}>
               <div>
                 {item.product.name}
                 <p>{item.total_price}</p>
               </div>
             </Link>
-          </>
+          </div>
         ))}
       </div>
-      <div>
-        <p>Total Sum: {sum}</p>
+      <div className="">
+        <p>Total Sum: {sum} $</p>
       </div>
       <div>
-        <button></button>
+        <Paypal cartItems={cartItems} sum={sum} />
       </div>
     </>
   );
 };
-
 export default page;
